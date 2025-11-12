@@ -1,0 +1,8 @@
+class: Task
+table: task
+fields:
+  id: int?
+  title: String
+  description: String?
+  userId: int
+  createdAt: DateTime?

@@ -1,0 +1,12 @@
+auth:
+  - register:
+  - login:
+  - getCurrentUser:
+task:
+  - getAll:
+  - create:
+user:
+  - getAll:
+  - create:
+greeting:
+  - hello:

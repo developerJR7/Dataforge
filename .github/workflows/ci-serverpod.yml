@@ -1,0 +1,122 @@
+name: CI - Serverpod
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'dataforge_server/**'
+      - '.github/workflows/ci-serverpod.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'dataforge_server/**'
+
+jobs:
+  test:
+    name: Test Serverpod
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dataforge_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:6.2.6
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.6.5
+        with:
+          sdk: '3.5.0'
+
+      - name: Install Serverpod CLI
+        run: dart pub global activate serverpod_cli
+
+      - name: Get dependencies
+        working-directory: dataforge_server
+        run: dart pub get
+
+      - name: Generate code
+        working-directory: dataforge_server
+        run: serverpod generate
+
+      - name: Analyze code
+        working-directory: dataforge_server
+        run: dart analyze --fatal-infos
+
+      - name: Run tests
+        working-directory: dataforge_server
+        run: dart test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dataforge_test
+
+  lint:
+    name: Lint Serverpod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.6.5
+        with:
+          sdk: '3.5.0'
+
+      - name: Get dependencies
+        working-directory: dataforge_server
+        run: dart pub get
+
+      - name: Run linter
+        working-directory: dataforge_server
+        run: dart analyze --fatal-infos
+
+  build:
+    name: Build Serverpod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.6.5
+        with:
+          sdk: '3.5.0'
+
+      - name: Install Serverpod CLI
+        run: dart pub global activate serverpod_cli
+
+      - name: Get dependencies
+        working-directory: dataforge_server
+        run: dart pub get
+
+      - name: Generate code
+        working-directory: dataforge_server
+        run: serverpod generate
+
+      - name: Build server
+        working-directory: dataforge_server
+        run: dart compile kernel bin/main.dart
+
