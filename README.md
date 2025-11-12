@@ -149,11 +149,5 @@ git push -u origin main
 
 > Dica: antes do commit final, rode `git status` para garantir que apenas os arquivos relevantes (migrações, README, ajustes de Flutter, script de teste) estão sendo versionados.
 
-## 📌 Observações finais
-
-- O hash de senha no Serverpod usa SHA-256 apenas para fins de demonstração. Em produção, prefira bcrypt/scrypt.
-- A tela de criação de tasks valida o campo `User ID` e mostra uma mensagem amigável caso seja preenchido com texto.
-- Se rodar Flutter em um dispositivo físico, ajuste as URLs (`serverUrl` e `_fastApiUrl`) para o IP da máquina host.
-
-Pronto! Com esses passos o avaliador consegue reproduzir toda a solução end-to-end. Ajuste livremente para o ambiente de destino ou personalize para a documentação final da sua entrega.
+Pronto! Com esses passos o avaliador consegue reproduzir toda a solução end-to-end.
 
